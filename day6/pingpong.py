@@ -1,8 +1,8 @@
 import turtle as t
 from functools import partial
 import time
-
-GameSpeed=2
+import random
+GameSpeed=1
 
 XEdge=380                                         
 yEdge=280
@@ -18,6 +18,7 @@ class Player:
         self.t.penup()
         self.t.goto(self.x,self.y)
 
+
 class Ball:
     def __init__(self) -> None:
         self.t=t.Turtle()
@@ -26,8 +27,8 @@ class Ball:
         self.t.shape("circle")
         self.t.penup()
         self.t.goto(0,0)
-        self.x_direction=GameSpeed
-        self.y_direction=GameSpeed
+        self.x_direction=GameSpeed+random.randint(1,10)/10
+        self.y_direction=GameSpeed+random.randint(1,10)/10
 
 
     def move(self):
@@ -42,6 +43,7 @@ class Ball:
 
 class Game:
     def __init__(self) -> None:
+        self.balls=[]
         self.window=t.Screen()
         self.window.title("ping pong game")
         self.window.bgcolor("white")
@@ -53,7 +55,8 @@ class Game:
     def __setup_ui(self):
         self.left_player=Player(-350,0)
         self.right_player=Player(350,0)
-        self.ball=Ball()
+        self.balls.append(Ball())
+
         self.pen=t.Turtle()
         self.pen.color("red")
         self.pen.penup()
@@ -66,6 +69,7 @@ class Game:
         self.window.onkeypress(partial(self.__move_up,self.right_player),"Up")
         self.window.onkeypress(partial(self.__move_down,self.left_player),"s")
         self.window.onkeypress(partial(self.__move_down,self.right_player),"Down")
+        self.window.onkeypress(self.__add_ball,"a")
 
     def __move_up(self,player:Player):
         _y=player.t.ycor()+90
@@ -82,21 +86,24 @@ class Game:
         player.t.sety(_y)
 
     def __move_ball(self):
-        self.ball.move()
-        
+        for ball in self.balls:
+            ball.move()
+    def __add_ball(self):
+        self.balls.append(Ball())
     def __process_collision(self):
-        ball_x=self.ball.t.xcor()
-        ball_y=self.ball.t.ycor()
-        rp_y=self.right_player.t.ycor()
-        lp_y=self.left_player.t.ycor()
+        for ball in self.balls:
+            ball_x=ball.t.xcor()
+            ball_y=ball.t.ycor()
+            rp_y=self.right_player.t.ycor()
+            lp_y=self.left_player.t.ycor()
 
-        if abs(ball_x-350)<GameSpeed and abs(ball_y-rp_y)<80:
-            self.ball.t.setx(350)
-            self.ball.x_direction=self.ball.x_direction*-1
+            if abs(ball_x-350)<GameSpeed and abs(ball_y-rp_y)<80:
+                ball.t.setx(350)
+                ball.x_direction=ball.x_direction*-1
 
-        if abs(ball_x+350)<GameSpeed and abs(ball_y-lp_y)<80:
-            self.ball.t.setx(-350)
-            self.ball.x_direction=self.ball.x_direction*-1
+            if abs(ball_x+350)<GameSpeed and abs(ball_y-lp_y)<80:
+                ball.t.setx(-350)
+                ball.x_direction=ball.x_direction*-1
     
     def __game_over(self):
         self.pen.write("游戏结束",align="center",font=("Arial",24,"normal"))
@@ -115,8 +122,9 @@ class Game:
             self.__move_ball()
             self.__process_collision()
             self.window.update()
-            if abs(self.ball.t.xcor())>400:
-                self.__game_over()
+            for ball in self.balls:
+                if abs(ball.t.xcor())>400:
+                    self.__game_over()
   
 
 
