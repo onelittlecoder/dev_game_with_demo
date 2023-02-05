@@ -2,7 +2,7 @@ import turtle as t
 from functools import partial
 import time
 import random
-GameSpeed=2
+GameSpeed=10
 
 XEdge=380                                         
 yEdge=280
