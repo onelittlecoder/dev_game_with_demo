@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import time
 
 def getRandomPos():
     return [random.choice(range(0,1200)),random.choice(range(0,500))]
@@ -47,6 +48,7 @@ class Ball(pygame.sprite.Sprite):
         self.y=y
         self.screen=screen
         self.role=role
+        self.last_update_time=time.time()
         # self.setup_ui()
         
     
@@ -55,13 +57,20 @@ class Ball(pygame.sprite.Sprite):
         self.circle=pygame.transform.scale(self.img, (50, 50))
         self.screen.blit(self.circle, (self.x, self.y)) 
         text = self.font.render(str(self.value), True, (255, 255, 255))
-        self.screen.blit(text, (self.x+20, self.y+10))
+        self.screen.blit(text, (self.x+15, self.y+10))
 
     def update(self):
         if self.role=="player":
             (x,y)=pygame.mouse.get_pos()
             self.x=x
             self.y=y
+        else:
+            
+            if self.last_update_time and time.time()-self.last_update_time>2:
+                self.x=getRandomPos()[0]
+                self.y=getRandomPos()[1]
+                self.last_update_time=time.time()
+
         self.setup_ui()
 
     def update_value(self,value):
