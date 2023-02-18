@@ -5,7 +5,7 @@ import random
 img=cv2.imread("/Users/super/work/projects/python_src/day2/pic.png")
 org_img=np.asarray(img)
 new_img=org_img.copy()
-roi_len=9
+roi_len=1
 x,y=random.randint(200,895),random.randint(200,530)
 new_img[y-roi_len:y+roi_len,x-roi_len:x+roi_len,:]=200
 
